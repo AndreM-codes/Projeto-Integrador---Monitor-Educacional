@@ -1,5 +1,8 @@
 file/Inep Data/Estatísticas Censo Escolar/*
+!file/Inep Data/Estatísticas Censo Escolar/.gitkeep
 file/Inep Data/Sinopses Estatísticas Censo Escolar/*
+!file/Inep Data/Sinopses Estatísticas Censo Escolar/.gitkeep
+
 __pycache__
 .Rproj.user
 .Rhistory
