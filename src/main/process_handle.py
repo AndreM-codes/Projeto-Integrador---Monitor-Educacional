@@ -19,10 +19,10 @@ def start(cod_municipio, periodo, ConfiguracoesPersonalizadas) -> None:
 
             case "2":
                 subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True)
-                print('\n Filtrar por Palavra-Chave no Título?\nSim - 1\nSem Filtrar - ENTER\nVoltar - 9\n\n')
+                print('\n  Filtrar por Palavra-Chave no Título? \n\nSim - 1\nSem Filtrar - ENTER\nVoltar - 9\n\n')
                 command = input('Comando:  ')
                 if command != "9":
-                    command = input('\n\Palavra-Chave:  ')
+                    command = input('\nPalavra-Chave:  ')
                     sinopse_escolar_constructor(cod_municipio, periodo, command)
                 else:
                     subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True)

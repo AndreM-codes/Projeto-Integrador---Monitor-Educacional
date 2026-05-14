@@ -225,6 +225,7 @@ def sinopse_escolar_constructor(Cidades, Anos, command):
                             df = SinopseEscolarController.ajustar_dataframe(df, planilhas_filtradas[titulo])
                         else:
                             renomes_paginas[titulo] = f'{nome_pagina}-{ano[-2:]}'
+
                             df = SinopseEscolarController.criar_dataframe(df)
 
                         if not Cidades:

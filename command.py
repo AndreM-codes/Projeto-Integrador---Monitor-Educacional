@@ -7,8 +7,7 @@ cod_municipio = [
     3543402 # Ribeirão Preto
 ]
 
-periodo = years(2020,2024) # 2020 até 2024
-
+periodo = years(2020,2024) #2020 até 2024
 
 ConfiguracoesPersonalizadas = {  
 
@@ -16,9 +15,9 @@ ConfiguracoesPersonalizadas = {
 
                                 matriculas=["Total"],
 
-                                categorias=['Dependência Administrativa'], 
-                                            #'Escola Privada Conveniada com o Poder Público', 
-                                            #'Cor/Raça', 'Sexo', 'Faixa Etária','Tempo Integral/Parcial'],
+                                categorias=['Dependência Administrativa', 
+                                            'Escola Privada Conveniada com o Poder Público', 
+                                            'Cor/Raça', 'Sexo', 'Faixa Etária','Tempo Integral/Parcial'],
                                 
                                 etapa=['Educação de Jovens e Adultos - EJA'],
 
@@ -28,9 +27,7 @@ ConfiguracoesPersonalizadas = {
                                         })
 }
 
-
 if __name__ == "__main__":
-    subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True) # os.system('cls||clear')
-    
+    subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True)
     start(cod_municipio, periodo, ConfiguracoesPersonalizadas)
 

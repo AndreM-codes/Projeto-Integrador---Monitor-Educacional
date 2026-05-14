@@ -59,17 +59,17 @@ ui <- dashboardPage(
     sidebarMenu(
       id = "sidebar",
       
-      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
+      menuItem("Info", tabName = "item1", icon = icon("circle-info")),
       
-      menuItem("Dashboard", tabName = "item1", icon = icon("dashboard"), startExpanded = FALSE,
-               menuSubItem("Educação Infantil", tabName = "grafico1", icon = icon("1")),
-               menuSubItem("Alfabetização", tabName = "grafico2", icon = icon("2")),
-               menuSubItem("Ensino Fundamental", tabName = "tabela1", icon = icon("3")),
-               menuSubItem("Educação Integral", tabName = "tabela1", icon = icon("4")),
-               menuSubItem("Diversidade e Inclusão", tabName = "tabela1", icon = icon("5")),
-               menuSubItem("Educação Profissional", tabName = "tabela1", icon = icon("6")),
-               menuSubItem("Educação Superior", tabName = "tabela1", icon = icon("7")),
-               menuSubItem("Estrutura da Educação", tabName = "tabela1", icon = icon("8"))
+      menuItem("Dashboards", tabName = "item1", icon = icon("dashboard"), startExpanded = FALSE,
+               menuSubItem("Educação Infantil", tabName = "dashboard", icon = icon("1")),
+               menuSubItem("Alfabetização", tabName = "dashboard", icon = icon("2")),
+               menuSubItem("Ensino Fundamental", tabName = "dashboard", icon = icon("3")),
+               menuSubItem("Educação Integral", tabName = "dashboard", icon = icon("4")),
+               menuSubItem("Diversidade e Inclusão", tabName = "dashboard", icon = icon("5")),
+               menuSubItem("Educação Profissional", tabName = "dashboard", icon = icon("6")),
+               menuSubItem("Educação Superior", tabName = "dashboard", icon = icon("7")),
+               menuSubItem("Estrutura da Educação", tabName = "dashboard", icon = icon("8"))
                )
       )
   ),

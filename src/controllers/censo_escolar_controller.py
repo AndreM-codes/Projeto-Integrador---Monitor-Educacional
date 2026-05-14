@@ -455,7 +455,7 @@ class SinopseEscolarController:
         cabeçalho[0] = 'Ano'  # Renomeia a primeira coluna
         
         df.columns = cabeçalho
-        return pd.DataFrame(columns=cabeçalho)
+        return df
 
     def processar_lista_de_listas(lista_de_listas):
         penultima_linha = len(lista_de_listas) - 2

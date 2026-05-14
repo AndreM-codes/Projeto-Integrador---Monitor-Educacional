@@ -4,6 +4,9 @@ file/Inep Data/Sinopses Estatísticas Censo Escolar/*
 !file/Inep Data/Sinopses Estatísticas Censo Escolar/.gitkeep
 file/Inep Data/Sinopse_Estatistica_Concat_Edu_Basica.xlsx
 __pycache__
+.venv
+.github
+.vscode
 .Rproj.user
 .Rhistory
 .RData
