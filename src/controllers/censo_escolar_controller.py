@@ -1,6 +1,7 @@
 import os
+import re
+from unidecode import unidecode
 import time
-import csv
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -336,3 +337,163 @@ class CensoEscolarController:
                 except KeyError:
                         print("Código IBGE inválido ou informações não encontradas.")
                         return exit()
+
+class SinopseEscolarController:
+
+    def sinopse_concat(diretorio: str, codigos_cidades: list[int], paginas_contem: None|str, nome_arquivo_saida):
+        
+        # Lista e ordena os arquivos
+        arquivos = sorted([
+            nome_arquivo for nome_arquivo in os.listdir(diretorio)
+            if nome_arquivo.startswith('Sinopse_Estatistica_da_Educação_Basica') 
+            and nome_arquivo.endswith('.xlsx')
+        ])
+
+        planilhas_filtradas = {}
+        renomes_paginas = {}
+        ultimo_ano = ''
+
+        for nome_arquivo in arquivos:
+            ano = re.search(r'\d{4}', nome_arquivo).group()
+            if nome_arquivo == arquivos[-1]:
+                ultimo_ano = f'-{ano[-2:]}'
+            
+            caminho_arquivo = os.path.join(diretorio, nome_arquivo)
+            xl = pd.ExcelFile(caminho_arquivo)
+            paginas = xl.sheet_names
+            
+            if paginas_contem:
+                
+                df = xl.parse('Sumário')
+                col_zero = df.columns[0]
+                linhas_com_eja = df[df[col_zero].astype(str).str.contains(paginas_contem, na=False)][col_zero].str.split().str[0].tolist()
+                paginas = [item for item in paginas if any(term in item for term in linhas_com_eja)]
+            
+                
+        
+            for nome_pagina in paginas:
+                df = xl.parse(nome_pagina)
+                print(f'{nome_arquivo}: {nome_pagina}')
+                
+                if df.empty:
+                    continue
+
+                if df.columns[0] == 'Voltar ao Sumário':
+                    titulo = unidecode(df['Voltar ao Sumário'].iloc[2])
+                    substituicoes = {
+                        ', por Etapa de Ensino': ', por Ano',
+                        ' Regular': '',
+                        '–': '-',
+                        '.': '',
+                    }
+
+                    for chave, valor in substituicoes.items():
+                        titulo = titulo.replace(chave, valor)
+
+                    titulo = re.sub(r'^\d+\s-\s+', '', titulo)
+                    titulo = re.sub(r'\s+-\s\d+$', '', titulo)
+                    palavras = re.findall(r'[A-Z]\w+', titulo)
+                    titulo = ' '.join(palavras)
+
+                    # Processamento do DataFrame
+                    if titulo in planilhas_filtradas:
+                        renomes_paginas[titulo] = f'{nome_pagina}-{ano[-2:]}'
+                        df = SinopseEscolarController.ajustar_dataframe(df, planilhas_filtradas[titulo])
+                    else:
+                        renomes_paginas[titulo] = f'{nome_pagina}-{ano[-2:]}'
+                        df = SinopseEscolarController.criar_dataframe(df)
+    
+                    if not codigos_cidades:
+                        
+                        df['Ano'] = int(ano)
+                        df['Código do Município'] = pd.to_numeric(df['Código do Município'], errors='coerce')
+                        linhas_cidades = df.dropna(subset=['Código do Município'])
+                                            
+                        if titulo in planilhas_filtradas:
+                            planilhas_filtradas[titulo] = pd.concat([planilhas_filtradas[titulo], linhas_cidades])
+                        else:
+                            planilhas_filtradas[titulo] = linhas_cidades
+                    
+                    else:
+                        for codigo_cidade in codigos_cidades:
+                            df['Ano'] = int(ano)
+                            linhas_cidades = df[df['Código do Município'] == codigo_cidade]
+                            
+                            if titulo in planilhas_filtradas:
+                                planilhas_filtradas[titulo] = pd.concat([planilhas_filtradas[titulo], linhas_cidades])
+                            else:
+                                planilhas_filtradas[titulo] = linhas_cidades
+
+        # Salvar resultados em um arquivo Excel
+        SinopseEscolarController.salvar_resultados(planilhas_filtradas, renomes_paginas, nome_arquivo_saida, ultimo_ano)
+
+    def ajustar_dataframe(df, df_referencia):
+        if len(df.columns) < len(df_referencia.columns):
+            for _ in range(len(df_referencia.columns) - len(df.columns)):
+                df[f'new_column_{len(df.columns)}'] = None
+        elif len(df.columns) > len(df_referencia.columns):
+            df = df.iloc[:, :len(df_referencia.columns)]
+        
+        df.columns = df_referencia.columns
+        return df
+
+    def criar_dataframe(df):
+        index_regiao = df[df['Voltar ao Sumário'].str.startswith('Região', na=False)]
+        index_brasil = df[df['Voltar ao Sumário'].str.startswith('Brasil', na=False)]
+        
+        primeira_linha = df.iloc[index_regiao.index].index[0]
+        ultima_linha = df.iloc[index_brasil.index - 1].index[0]
+        linhas_entre = df.iloc[primeira_linha:ultima_linha]
+
+        df_preenchido_y = linhas_entre.ffill(axis=0)
+        df_preenchido_xy = df_preenchido_y[2:].ffill(axis=1)
+        
+        linhas_listas = df_preenchido_xy.values.tolist()
+        linhas_processadas = SinopseEscolarController.processar_lista_de_listas(linhas_listas)
+        
+        cabeçalho = SinopseEscolarController.gerar_cabecalho(linhas_processadas)
+        cabeçalho[0] = 'Ano'  # Renomeia a primeira coluna
+        
+        df.columns = cabeçalho
+        return pd.DataFrame(columns=cabeçalho)
+
+    def processar_lista_de_listas(lista_de_listas):
+        penultima_linha = len(lista_de_listas) - 2
+        lista_processada = []
+
+        for i, lista in enumerate(lista_de_listas):
+            nova_lista = []
+            iterator = iter(lista)
+            primeiro_total = True
+
+            for item in iterator:
+                if item.startswith('Total') and i == penultima_linha:
+                    if primeiro_total:
+                        primeiro_total = False
+                        nova_lista.append(item)
+                    else:
+                        proximo_item = next(iterator, '')
+                        nova_lista.extend([proximo_item, proximo_item])
+                else:
+                    nova_lista.append(item)
+
+            lista_processada.append(nova_lista)
+
+        return lista_processada
+
+
+    def gerar_cabecalho(linhas):
+        cabeçalho = []
+        for coluna in range(len(linhas[-1])):
+            valores = [linhas[i][coluna] for i in range(len(linhas))]
+            valores = [re.sub(r'(?<=[A-Za-z])\d.*$', '', v).strip() for v in valores]  # Remove números e traços grudados a letras
+            valores_unicos = list(dict.fromkeys(valores))
+            cabeçalho.append(' '.join(valores_unicos))
+        return cabeçalho
+
+    def salvar_resultados(planilhas_filtradas, renomes_paginas, nome_arquivo_saida, ultimo_ano):
+        with pd.ExcelWriter(nome_arquivo_saida) as writer:
+            for titulo, linhas_filtradas in planilhas_filtradas.items():
+                linhas_filtradas.to_excel(writer, 
+                                        sheet_name=renomes_paginas[titulo].replace(ultimo_ano, ''), 
+                                        index=False)

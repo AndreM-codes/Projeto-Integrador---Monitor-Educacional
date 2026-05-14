@@ -1,9 +1,9 @@
 import os
-from typing import Dict
+import subprocess
 
 class Censo_Escolar_View:
     def escolha_local(self):
-        os.system('cls||clear')
+        subprocess.run('cls' if os.name == 'nt' else 'clear', shell=True)
 
         print(
 
@@ -12,6 +12,7 @@ class Censo_Escolar_View:
               
 Capitar Censo Escolar Completo - 1
 Capitar Censo Escolar Personalizado - 2
+Voltar - 9
 
 '''
 

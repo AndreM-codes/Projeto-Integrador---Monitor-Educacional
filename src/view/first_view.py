@@ -5,7 +5,7 @@ def introduction_page():
         Banco de Dados Educacionais
 
 Obter dados do Painel Oracle Inep - 1
-Obter Analise Completa - 2
+Limpar dados da Sinopse do Censo Escolar - 2
 Sair - 9
 
 """
