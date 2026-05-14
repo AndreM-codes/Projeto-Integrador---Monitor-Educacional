@@ -1,6 +1,6 @@
-# Projeto .ipynb: Concatenação e Simplificação de Arquivos das Sinopses do INEP
+# Projeto Integrador de Simplificação de Dados do INEP
 
-Este projeto é uma ferramenta que permite concatenar e simplificar todos os arquivos da Sinopse Básica de uma pasta. É ideal para quem precisa otimizar esses arquivos de forma rápida e eficiente.
+Este projeto é uma ferramenta que permite concatenar e simplificar todos os arquivos da Sinopse Básica de uma pasta. É ideal para quem precisa otimizar esses arquivos de forma rápida e eficiente. 
 
 ## Funcionalidades
 
@@ -22,9 +22,9 @@ Este projeto é uma ferramenta que permite concatenar e simplificar todos os arq
 
 **Clone o repositório** ou apenas baixe o .ipynb (para isso, você precisará das sinopses disponíveis nos canais de Dados Abertos do INEP).
 
-**Abra o script**:
+**Use o script**:
 ```bash
-Sinopse_Basica_Concat.ipynb
+comand.py
 ```
 
 **Mude as variáveis, caso necessário**: Altere as variáveis para modificar a lista de cidades procuradas.
