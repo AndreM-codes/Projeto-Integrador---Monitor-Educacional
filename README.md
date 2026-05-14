@@ -30,7 +30,7 @@ Este projeto é uma ferramenta que permite concatenar, simplificar e apresentar 
 **Use o script**:
 
 ```bash
-comand.py
+command.py
 ```
 
 ![alt text](<doc/imgs/Captura 4.png>)
